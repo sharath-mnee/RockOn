@@ -60,11 +60,11 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-text">Sort by:</span>
-                <button className="flex items-center gap-2 px-4 py-2 border border-gray-border rounded-lg hover:border-brand-orange transition-colors">
+              <div className="flex items-center gap-2 border border-gray-300 rounded-xl px-2 py-0.5 shadow-sm">
+                <span className="font-medium text-gray-900">Sort by:</span>
+                <button className="flex items-center py-1 hover:border-brand-orange transition-colors">
                   <span className="font-medium">Featured</span>
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-4 h-4 pl-1" />
                 </button>
               </div>
             </div>

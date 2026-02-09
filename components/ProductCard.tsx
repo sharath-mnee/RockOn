@@ -33,10 +33,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
         {product.badge && (
           <span
-            className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold ${
+            className={`absolute top-3 right-3 px-3 py-1 rounded-lg text-xs font-semibold ${
               product.badge === 'Best seller'
                 ? 'bg-brand-orange text-white'
-                : 'bg-blue-500 text-white'
+                : 'bg-green-600 text-white'
             }`}
           >
             {product.badge}
