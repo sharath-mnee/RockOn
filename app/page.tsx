@@ -20,17 +20,15 @@ export default function Home() {
       <section className="relative h-[500px] overflow-hidden px-4 lg:px-6 mt-1">
         <div className="relative h-full w-full overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600"
+            src="/herobgimage.svg"
             alt="Concert crowd"
             fill
             className="object-cover"
             priority
           />
 
-          <div className="absolute inset-0 bg-gradient-to-b from-orange-500/40 to-pink-500/40" />
-
           <div className="relative h-full flex items-center justify-center">
-            <div className="bg-[#FFFFFF80] backdrop-blur-sm rounded-2xl p-8 md:p-12 w-[700px] text-center">
+            <div className="bg-[#FFFFFF60] backdrop-blur-sm rounded-2xl p-8 md:p-12 w-[700px] text-center">
               <h1 className="text-2xl md:text-4xl font-semibold mb-4">
                 Official concert merchandise
               </h1>

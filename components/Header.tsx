@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import { ShoppingCart, Search, Menu, X, Copy } from 'lucide-react'
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function Header() {
   const totalItems = useCartStore((state) => state.getTotalItems())
@@ -35,7 +36,12 @@ export default function Header() {
         <div className="flex items-center h-16 px-2 lg:px-6">
           <div className="flex items-center gap-10">
             <Link href="/" className="text-2xl font-bold text-brand-orange">
-              ROCK ON
+              <Image
+                src="/Rockonlogo.svg"
+                alt="logo"
+                width={120}
+                height={40}
+              ></Image>
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">

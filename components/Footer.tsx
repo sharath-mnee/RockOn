@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -7,7 +8,12 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-12 md:gap-20">
           <div className="md:w-2/3 flex flex-col mt-4">
             <Link href="/" className="text-2xl font-bold text-brand-orange">
-              ROCK ON
+              <Image
+                src="/Rockonlogo.svg"
+                alt="logo"
+                width={120}
+                height={40}
+              ></Image>
             </Link>
             <p className="text-[#737373] mt-6 text-sm leading-relaxed">
               Official merchandise from the world's biggest rock artists and

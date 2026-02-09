@@ -23,8 +23,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <div className="product-card">
-      <div className="relative aspect-[4/5] overflow-hidden">
+    <div className="product-card border border-gray-300 rounded-xl">
+      <div className="relative h-[420px] overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}
@@ -45,15 +45,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="p-4">
-        <p className="text-sm text-gray-text mb-1">{product.category}</p>
+        <p className="text-sm text-[#737373] mb-1">{product.category}</p>
 
         <h3 className="font-semibold text-lg mb-2 line-clamp-1">
           {product.name}
         </h3>
-
-        <p className="text-sm text-gray-text mb-3 line-clamp-2">
-          {product.description}
-        </p>
 
         <div className="flex items-center gap-1 mb-4">
           <div className="flex">
