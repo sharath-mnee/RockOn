@@ -1,9 +1,97 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
+import ProductCard from '@/components/ProductCard'
+import Filters from '@/components/Filters'
+import { products } from '@/lib/products'
+import { ChevronDown } from 'lucide-react'
 
 export default function Home() {
+  const [visibleProducts, setVisibleProducts] = useState(9)
+  const [sortBy, setSortBy] = useState('featured')
+
+  const loadMore = () => {
+    setVisibleProducts((prev) => Math.min(prev + 3, products.length))
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start"></main>
-    </div>
+    <main>
+      <section className="relative h-[500px] overflow-hidden px-4 lg:px-6 mt-1">
+        <div className="relative h-full w-full overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600"
+            alt="Concert crowd"
+            fill
+            className="object-cover"
+            priority
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-b from-orange-500/40 to-pink-500/40" />
+
+          <div className="relative h-full flex items-center justify-center">
+            <div className="bg-[#FFFFFF80] backdrop-blur-sm rounded-2xl p-8 md:p-12 w-[700px] text-center">
+              <h1 className="text-2xl md:text-4xl font-semibold mb-4">
+                Official concert merchandise
+              </h1>
+              <p className="text-lg text-gray-text mb-6">
+                Premium quality apparel from your favorite artists and tours
+              </p>
+              <button className="btn-primary px-3 py-1.5">
+                Shop new arrivals
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full px-4 lg:px-6 py-12 mx-auto">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <Filters />
+          </aside>
+
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-1">All products</h2>
+                <p className="text-sm text-gray-text">
+                  Showing {visibleProducts} products out of {products.length}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-text">Sort by:</span>
+                <button className="flex items-center gap-2 px-4 py-2 border border-gray-border rounded-lg hover:border-brand-orange transition-colors">
+                  <span className="font-medium">Featured</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <button className="lg:hidden w-full mb-6 btn-secondary">
+              Filters
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {products.slice(0, visibleProducts).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {visibleProducts < products.length && (
+              <div className="mt-12 text-center">
+                <button
+                  onClick={loadMore}
+                  className="btn-secondary border border-gray-300 py-2 px-3 rounded-lg"
+                >
+                  Load more products
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }

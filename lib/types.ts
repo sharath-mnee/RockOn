@@ -8,7 +8,7 @@ export interface Product {
   sizes: string[]
   rating: number
   reviews: number
-  badge?: 'Best seller' | 'New'
+  badge?: 'Best seller' | 'New' | '5% off'
 }
 
 export interface CartItem {

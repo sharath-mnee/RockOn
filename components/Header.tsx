@@ -31,7 +31,7 @@ export default function Header() {
       </div>
 
       {/* Main Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50 w-full">
+      <header className="bg-white sticky top-0 z-50 w-full">
         <div className="flex items-center h-16 px-2 lg:px-6">
           <div className="flex items-center gap-10">
             <Link href="/" className="text-2xl font-bold text-brand-orange">
