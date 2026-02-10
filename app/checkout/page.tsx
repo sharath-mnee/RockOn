@@ -8,6 +8,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import PaymentForm from '@/components/PaymentForm'
 import { Check } from 'lucide-react'
+import StablecoinPaymentModal from '@/components/StablecoinPaymentModal'
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
@@ -32,6 +33,7 @@ export default function CheckoutPage() {
   })
 
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card')
+  const [showStablecoinModal, setShowStablecoinModal] = useState(false)
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -40,6 +42,14 @@ export default function CheckoutPage() {
       ...shippingInfo,
       [e.target.name]: e.target.value,
     })
+  }
+
+  const handleStablecoinPayment = async () => {
+    setShowStablecoinModal(true)
+  }
+
+  const handlePaymentSuccess = (txHash: string) => {
+    setShowStablecoinModal(false)
   }
 
   if (items.length === 0) {
@@ -244,9 +254,10 @@ export default function CheckoutPage() {
                         name="payment"
                         value="stablecoin"
                         checked={selectedPayment === 'stablecoin'}
-                        onChange={(e) =>
+                        onChange={(e) => {
                           setSelectedPayment(e.target.value as PaymentMethod)
-                        }
+                          handleStablecoinPayment()
+                        }}
                         className="w-4 h-4 accent-brand-orange focus:ring-brand-orange"
                       />
                       <span className="font-medium">Pay with Stablecoin</span>
@@ -257,7 +268,7 @@ export default function CheckoutPage() {
                         alt="mnee-logo"
                         width={110}
                         height={10}
-                      ></Image>
+                      />
                     </div>
                   </div>
                 </label>
@@ -331,6 +342,17 @@ export default function CheckoutPage() {
                   Complete Payment
                 </button>
               )} */}
+              <StablecoinPaymentModal
+                isOpen={showStablecoinModal}
+                onClose={() => setShowStablecoinModal(false)}
+                amount={total}
+                integrationId="ee34c83e-fbb7-4c81-8e1a-d55a65f15173"
+                paymentIntentId="payment-intent-id"
+                customerName={'jhon'}
+                customerEmail={'jhon111@gmail.com'}
+                customerAddress={'Bengaluru'}
+                onSuccess={handlePaymentSuccess}
+              />
             </div>
           </div>
 

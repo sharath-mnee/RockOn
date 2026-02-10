@@ -36,3 +36,38 @@ export interface OrderSummary {
 }
 
 export type PaymentMethod = 'card' | 'stablecoin' | 'paypal' | 'klarna'
+
+export type PaymentStage =
+  | 'PENDING'
+  | 'PAYMENT_RECEIVED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'EXPIRED'
+  | 'LOADING'
+
+interface UserMetaData {
+  name: string
+  email: string
+  address: string
+}
+
+export interface StripeData {
+  amountUsdCents: number
+  integrationId: string
+  paymentIntentId: string
+  chain: string
+  stablecoin: string
+  userMetaData: UserMetaData
+  sessionToken?: string
+  depositAddress?: string
+  sessionId?: string
+  transaction_hash?: string
+  status?:
+    | 'PENDING'
+    | 'PAYMENT_RECEIVED'
+    | 'PROCESSING'
+    | 'COMPLETED'
+    | 'FAILED'
+    | 'EXPIRED'
+}
