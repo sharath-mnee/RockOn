@@ -44,6 +44,7 @@ export default function StablecoinPaymentModal({
   const [error, setError] = useState<string>('')
   const [secondsLeft, setSecondsLeft] = useState(10)
   const pollIntervalRef = useRef<number | null>(null)
+  const hasCalledOnSuccess = useRef(false)
 
   // poll
   const startTransactionPolling = useCallback((sessionToken: string) => {
@@ -213,19 +214,36 @@ export default function StablecoinPaymentModal({
       amount &&
       customerAddress &&
       customerEmail &&
-      customerName
+      customerName &&
+      !hasCalledOnSuccess.current
     ) {
-      onSuccess(
-        transactionHash,
-        customerAddress,
-        customerEmail,
-        customerName,
-        amount,
-      )
+      hasCalledOnSuccess.current = true
+      queueMicrotask(() => {
+        onSuccess(
+          transactionHash,
+          customerAddress,
+          customerEmail,
+          customerName,
+          amount,
+        )
+      })
     }
-  }, [stage, transactionHash, onSuccess])
+  }, [
+    stage,
+    transactionHash,
+    onSuccess,
+    amount,
+    customerAddress,
+    customerEmail,
+    customerName,
+  ])
 
-  // Auto-redirect countdown
+  useEffect(() => {
+    if (isOpen) {
+      hasCalledOnSuccess.current = false
+    }
+  }, [isOpen])
+
   useEffect(() => {
     if (stage !== 'COMPLETED') return
 
@@ -464,9 +482,9 @@ export default function StablecoinPaymentModal({
       {stage === 'COMPLETED' && (
         <div className="bg-[#F7F7F7] border border-[#F7F7F7] rounded-3xl p-10 w-[420px] shadow-2xl text-center">
           <div className="mb-6">
-            <div className="w-14 h-14 bg-green-900 rounded-full flex border border-green-700 items-center justify-center mx-auto shadow-lg shadow-green-900">
+            <div className="w-14 h-14 bg-[#00C9501A] rounded-full flex border border-[#00C95080] items-center justify-center mx-auto shadow-sm">
               <svg
-                className="w-7 h-7 text-green-600"
+                className="w-7 h-7 text-[#00C950]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -509,7 +527,7 @@ export default function StablecoinPaymentModal({
                 href={`https://basescan.org/tx/${transactionHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[##E88C1F] text-xs font-mono hover:text-orange-400 flex items-center gap-1"
+                className="text-[#E88C1F] text-xs font-mono hover:text-orange-400 flex items-center gap-1"
               >
                 {transactionHash.slice(0, 6)}…{transactionHash.slice(-4)}
                 <svg
@@ -546,7 +564,15 @@ export default function StablecoinPaymentModal({
 
       {/* Failed Modal */}
       {stage === 'FAILED' && (
-        <div className="bg-[#F7F7F7] border border-[#F7F7F7] rounded-3xl p-10 max-w-md w-full shadow-2xl text-center">
+        <div className="relative bg-[#F7F7F7] border border-[#F7F7F7] rounded-3xl p-10 max-w-md w-full shadow-2xl text-center">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-[#525252] hover:text-gray-800 transition"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">
             Payment Failed
           </h2>
@@ -563,7 +589,7 @@ export default function StablecoinPaymentModal({
                 customerAddress,
               )
             }}
-            className="w-[200px] bg-[#E88C1F] hover:bg-[#D17A1A] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/30"
+            className="w-[200px] bg-[#E93101] hover:bg-[#E93101] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/30"
           >
             Try Again
           </button>

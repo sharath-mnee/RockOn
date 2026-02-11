@@ -9,17 +9,23 @@ import { Elements } from '@stripe/react-stripe-js'
 import PaymentForm from '@/components/PaymentForm'
 import { Check } from 'lucide-react'
 import StablecoinPaymentModal from '@/components/StablecoinPaymentModal'
+import { useHydrated } from '@/lib/useHydrated'
+import { useRouter } from 'next/navigation'
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
 )
+const cpmt_id = process.env.NEXT_PUBLIC_CPMT_ID
 
 export default function CheckoutPage() {
+  const hydrated = useHydrated()
+  const router = useRouter()
   const items = useCartStore((state) => state.items)
   const subtotal = useCartStore((state) => state.getSubtotal())
   const shipping = 2.49
   const tax = subtotal * 0.1
-  const total = subtotal + shipping + tax
+  // const total = subtotal + shipping + tax
+  const total = subtotal
 
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
     firstName: '',
@@ -34,6 +40,8 @@ export default function CheckoutPage() {
 
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card')
   const [showStablecoinModal, setShowStablecoinModal] = useState(false)
+  const [paymentCompleted, setPaymentCompleted] = useState(false)
+  if (!hydrated) return null
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -48,8 +56,40 @@ export default function CheckoutPage() {
     setShowStablecoinModal(true)
   }
 
-  const handlePaymentSuccess = (txHash: string) => {
-    setShowStablecoinModal(false)
+  const handlePaymentSuccess = async (
+    txHash: string,
+    customerAddress: string,
+    customerEmail: string,
+    customerName: string,
+    amount: number,
+  ) => {
+    setPaymentCompleted(true)
+    try {
+      const response = await fetch('/api/record-custom-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpm_id: cpmt_id,
+          hash: txHash,
+          amount,
+          metadata: {
+            product_name: items[0]?.product.name,
+            customer_name: customerName,
+            customer_email: customerEmail,
+            customer_address: customerAddress,
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to record payment')
+      }
+
+      const { data } = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   if (items.length === 0) {
@@ -332,7 +372,11 @@ export default function CheckoutPage() {
                       currency: 'usd',
                     }}
                   >
-                    <PaymentForm shippingInfo={shippingInfo} total={total} />
+                    <PaymentForm
+                      shippingInfo={shippingInfo}
+                      product={items[0].product.name}
+                      total={total}
+                    />
                   </Elements>
                 </div>
               )}
@@ -344,13 +388,19 @@ export default function CheckoutPage() {
               )} */}
               <StablecoinPaymentModal
                 isOpen={showStablecoinModal}
-                onClose={() => setShowStablecoinModal(false)}
+                onClose={() => {
+                  setShowStablecoinModal(false)
+                  if (paymentCompleted) {
+                    router.push('/success')
+                    setPaymentCompleted(false)
+                  }
+                }}
                 amount={total}
                 integrationId="ee34c83e-fbb7-4c81-8e1a-d55a65f15173"
                 paymentIntentId="payment-intent-id"
-                customerName={'jhon'}
-                customerEmail={'jhon111@gmail.com'}
-                customerAddress={'Bengaluru'}
+                customerName={'John Smith'}
+                customerEmail={'john.smith@example.com'}
+                customerAddress={'123 Main St New York, NY 10001 United States'}
                 onSuccess={handlePaymentSuccess}
               />
             </div>

@@ -8,9 +8,14 @@ import toast from 'react-hot-toast'
 interface PaymentFormProps {
   shippingInfo: ShippingInfo
   total: number
+  product: string
 }
 
-export default function PaymentForm({ shippingInfo, total }: PaymentFormProps) {
+export default function PaymentForm({
+  shippingInfo,
+  total,
+  product,
+}: PaymentFormProps) {
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
@@ -23,14 +28,14 @@ export default function PaymentForm({ shippingInfo, total }: PaymentFormProps) {
     }
 
     // Validate shipping info
-    if (
-      !shippingInfo.firstName ||
-      !shippingInfo.email ||
-      !shippingInfo.address
-    ) {
-      toast.error('Please fill in all shipping information')
-      return
-    }
+    // if (
+    //   !shippingInfo.firstName ||
+    //   !shippingInfo.email ||
+    //   !shippingInfo.address
+    // ) {
+    //   toast.error('Please fill in all shipping information')
+    //   return
+    // }
 
     setLoading(true)
 
@@ -51,6 +56,12 @@ export default function PaymentForm({ shippingInfo, total }: PaymentFormProps) {
         body: JSON.stringify({
           amount: Math.round(total * 100),
           currency: 'usd',
+          metadata: {
+            product_name: product,
+            customer_name: 'Jhon Smith',
+            customer_email: 'john.smith@example.com',
+            customer_address: '123 Main St New York, NY 10001 United States',
+          },
         }),
       })
 

@@ -36,7 +36,7 @@ export const products: Product[] = [
   {
     id: '4',
     name: 'Festival Vibes Sticker',
-    price: 1.0,
+    price: 0.5,
     image: '/festivalvibes.svg',
     category: 'Posters & Prints',
     sizes: [],

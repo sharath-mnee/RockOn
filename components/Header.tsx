@@ -5,10 +5,13 @@ import { useCartStore } from '@/lib/store'
 import { ShoppingCart, Search, Menu, X, Copy } from 'lucide-react'
 import { useState } from 'react'
 import Image from 'next/image'
+import { useHydrated } from '@/lib/useHydrated'
 
 export default function Header() {
+  const hydrated = useHydrated()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  if (!hydrated) return null
 
   return (
     <>

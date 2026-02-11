@@ -15,9 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = () => {
     const defaultSize =
-      product.sizes.length > 0
-        ? product.sizes[2] || product.sizes[0]
-        : 'One Size'
+      product.sizes.length > 0 ? product.sizes[2] || product.sizes[0] : 'M'
     addItem(product, defaultSize)
     toast.success('Added to cart!')
   }
