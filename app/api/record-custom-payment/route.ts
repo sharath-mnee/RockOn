@@ -7,10 +7,10 @@ import Stripe from 'stripe'
 //     customer_address: '123 Main St New York, NY 10001 United States'
 // }
 
-const stripeKey = process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY
+const stripeKey = process.env.STRIPE_SECRET_KEY
 
 if (!stripeKey) {
-  throw new Error('Missing Stripe secret key (NEXT_PUBLIC_STRIPE_SECRET_KEY)')
+  throw new Error('Missing Stripe secret key (STRIPE_SECRET_KEY)')
 }
 const stripe = new Stripe(stripeKey, {
   apiVersion: '2026-01-28.clover',
