@@ -557,7 +557,7 @@ export default function StablecoinPaymentModal({
           </div>
 
           <p className="text-[#525252] text-xs mt-5">
-            Auto-closing in {secondsLeft}s…
+            Auto-redirecting in {secondsLeft}s...
           </p>
         </div>
       )}

@@ -5,6 +5,7 @@ import { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/store'
 import { ShoppingCart, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 interface ProductCardProps {
   product: Product
@@ -12,12 +13,14 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem)
+  const router = useRouter()
 
   const handleAddToCart = () => {
     const defaultSize =
       product.sizes.length > 0 ? product.sizes[2] || product.sizes[0] : 'M'
     addItem(product, defaultSize)
     toast.success('Added to cart!')
+    router.push('/checkout')
   }
 
   return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import ProductCard from '@/components/ProductCard'
 import Filters from '@/components/Filters'
@@ -10,9 +10,17 @@ import { ChevronDown } from 'lucide-react'
 export default function Home() {
   const [visibleProducts, setVisibleProducts] = useState(9)
   const [sortBy, setSortBy] = useState('featured')
+  const productsRef = useRef<HTMLElement>(null)
 
   const loadMore = () => {
     setVisibleProducts((prev) => Math.min(prev + 3, products.length))
+  }
+
+  const scrollToProducts = () => {
+    productsRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
   }
 
   return (
@@ -35,7 +43,10 @@ export default function Home() {
               <p className="text-lg text-gray-text mb-6">
                 Premium quality apparel from your favorite artists and tours
               </p>
-              <button className="btn-primary px-3 py-1.5">
+              <button
+                onClick={scrollToProducts}
+                className="btn-primary px-3 py-1.5"
+              >
                 Shop new arrivals
               </button>
             </div>
@@ -43,7 +54,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="w-full px-4 lg:px-6 py-12 mx-auto">
+      <section ref={productsRef} className="w-full px-4 lg:px-6 py-12 mx-auto">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <Filters />

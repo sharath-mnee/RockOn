@@ -2,15 +2,40 @@
 
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
-import { ShoppingCart, Search, Menu, X, Copy } from 'lucide-react'
-import { useState } from 'react'
+import { ShoppingCart, Search, Menu, X, Copy, Trash2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useHydrated } from '@/lib/useHydrated'
+import toast from 'react-hot-toast'
 
 export default function Header() {
   const hydrated = useHydrated()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
+  const clearCart = useCartStore((state) => state.clearCart)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setCartDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleClearCart = () => {
+    clearCart()
+    setCartDropdownOpen(false)
+    toast.success('Cart cleared!')
+  }
+
   if (!hydrated) return null
 
   return (
@@ -75,7 +100,7 @@ export default function Header() {
           <div className="flex-1" />
 
           <div className="flex items-center gap-4">
-            <div className="hidden lg:flex items-center bg-gray-bg rounded-lg px-4 py-1 w-80 border border-gray-300">
+            <div className="hidden lg:flex items-center bg-gray-bg rounded-md px-4 py-1 w-80 border border-gray-300 shadow-sm">
               <Search className="w-4 h-4 text-gray-400 mr-2" />
               <input
                 type="text"
@@ -84,16 +109,33 @@ export default function Header() {
               />
             </div>
 
-            <Link
-              href="/checkout"
-              className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-3 py-0.5 rounded-lg hover:bg-white transition-colors"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span className="hidden sm:inline">Cart</span>
-              <span className="bg-white text-gray-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                ({totalItems > 0 ? totalItems : 0})
-              </span>
-            </Link>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setCartDropdownOpen(!cartDropdownOpen)}
+                className="flex items-center gap-1 bg-white border border-gray-300 text-gray-700 px-2 py-0.5 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span className="hidden sm:inline font-medium">Cart</span>
+                <span className="bg-white text-gray-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  ({totalItems > 0 ? totalItems : 0})
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {cartDropdownOpen && totalItems > 0 && (
+                <div className="absolute right-0 mt-1 w-24 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                  {totalItems > 0 && (
+                    <button
+                      onClick={handleClearCart}
+                      className="w-full flex items-center gap-3 px-2.5 py-1 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Clear
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             <button
               className="md:hidden"
