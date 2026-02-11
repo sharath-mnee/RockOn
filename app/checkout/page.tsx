@@ -41,6 +41,8 @@ export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card')
   const [showStablecoinModal, setShowStablecoinModal] = useState(false)
   const [paymentCompleted, setPaymentCompleted] = useState(false)
+  const [stripeId, setStripeId] = useState('')
+  console.log('stripe_id', stripeId)
   if (!hydrated) return null
 
   const handleInputChange = (
@@ -81,12 +83,12 @@ export default function CheckoutPage() {
         }),
       })
 
+      const data = await response.json()
+      setStripeId(data.paymentRecord?.id)
+
       if (!response.ok) {
         throw new Error('Failed to record payment')
       }
-
-      const { data } = await response.json()
-      console.log(data)
     } catch (error) {
       console.error(error)
     }
