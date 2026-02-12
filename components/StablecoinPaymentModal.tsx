@@ -11,7 +11,7 @@ interface StablecoinPaymentModalProps {
   onClose: () => void
   amount: number
   integrationId: string
-  paymentIntentId: string
+  // paymentIntentId: string
   customerName: string
   customerEmail: string
   customerAddress: string
@@ -21,6 +21,7 @@ interface StablecoinPaymentModalProps {
     customerEmail: string,
     customerName: string,
     amount: number,
+    sessionToken: string,
   ) => void
 }
 
@@ -32,7 +33,7 @@ export default function StablecoinPaymentModal({
   onClose,
   amount,
   integrationId,
-  paymentIntentId,
+  // paymentIntentId,
   customerName,
   customerEmail,
   customerAddress,
@@ -43,6 +44,7 @@ export default function StablecoinPaymentModal({
   const [transactionHash, setTransactionHash] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [secondsLeft, setSecondsLeft] = useState(10)
+  const [sessionToken, setSessionToken] = useState<string>('')
   const pollIntervalRef = useRef<number | null>(null)
   const hasCalledOnSuccess = useRef(false)
 
@@ -110,7 +112,7 @@ export default function StablecoinPaymentModal({
     async (
       amt: string,
       integration: string,
-      paymentIntent: string,
+      // paymentIntent: string,
       name: string,
       email: string,
       address: string,
@@ -119,7 +121,7 @@ export default function StablecoinPaymentModal({
         const payload = {
           amountUsdCents: Math.round(Number(amt) * 100),
           integrationId: integration,
-          paymentIntentId: paymentIntent,
+          // paymentIntentId: paymentIntent,
           userMetaData: { name, email, address },
           chain: 'BASE',
           stablecoin: 'USDC',
@@ -144,6 +146,7 @@ export default function StablecoinPaymentModal({
 
         setPaymentData(data)
         setStage(data?.status ?? 'PENDING')
+        setSessionToken(data?.sessionToken ?? '')
 
         if (data?.sessionToken) {
           startTransactionPolling(data.sessionToken)
@@ -180,7 +183,7 @@ export default function StablecoinPaymentModal({
       createPayment(
         String(amount),
         integrationId,
-        paymentIntentId,
+        // paymentIntentId,
         customerName,
         customerEmail,
         customerAddress,
@@ -198,7 +201,7 @@ export default function StablecoinPaymentModal({
     isOpen,
     amount,
     integrationId,
-    paymentIntentId,
+    // paymentIntentId,
     customerName,
     customerEmail,
     customerAddress,
@@ -212,6 +215,7 @@ export default function StablecoinPaymentModal({
       onSuccess &&
       transactionHash &&
       amount &&
+      sessionToken &&
       customerAddress &&
       customerEmail &&
       customerName &&
@@ -225,6 +229,7 @@ export default function StablecoinPaymentModal({
           customerEmail,
           customerName,
           amount,
+          sessionToken,
         )
       })
     }
@@ -236,6 +241,7 @@ export default function StablecoinPaymentModal({
     customerAddress,
     customerEmail,
     customerName,
+    sessionToken,
   ])
 
   useEffect(() => {
@@ -583,7 +589,7 @@ export default function StablecoinPaymentModal({
               createPayment(
                 String(amount),
                 integrationId,
-                paymentIntentId,
+                // paymentIntentId,
                 customerName,
                 customerEmail,
                 customerAddress,

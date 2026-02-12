@@ -5,6 +5,7 @@ import Stripe from 'stripe'
 //     customer_name: 'John Smith',
 //     customer_email: 'john.smith@example.com',
 //     customer_address: '123 Main St New York, NY 10001 United States'
+//     product_name: 'Festival Vibes sticker pack',
 // }
 
 const stripeKey = process.env.STRIPE_SECRET_KEY
@@ -20,6 +21,8 @@ export async function POST(request: NextRequest) {
   try {
     const { cpm_id, hash, amount, metadata } = await request.json()
     const amountInCents = Math.round(amount * 100)
+
+    // payment method
     const paymentMethod = await stripe.paymentMethods.create({
       type: 'custom',
       custom: {
@@ -27,6 +30,13 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // create customer
+    const customer = await stripe.customers.create({
+      name: metadata.customer_name,
+      email: metadata.customer_email,
+    })
+
+    // record custom payment
     const paymentRecord = await stripe.paymentRecords.reportPayment({
       amount_requested: {
         value: amountInCents,
@@ -48,6 +58,16 @@ export async function POST(request: NextRequest) {
         guaranteed_at: Math.floor(Date.now() / 1000),
       },
       metadata: metadata,
+      description: `Custom payment for product ${metadata?.product_name} $${amount} from ${metadata?.customer_name || 'unknown customer'}`,
+      customer_details: {
+        customer: customer.id || 'Unknown Customer',
+      },
+      shipping_details: {
+        address: {
+          line1: metadata?.customer_address || 'Unknown Address',
+        },
+        name: metadata?.customer_name || 'Unknown Customer',
+      },
     })
 
     return NextResponse.json({

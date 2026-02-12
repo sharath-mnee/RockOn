@@ -6,6 +6,10 @@ import { Toaster } from 'react-hot-toast'
 import Footer from '@/components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
+export const metadata = {
+  title: 'Rock On',
+  description: 'Official concert merchandise',
+}
 
 export default function RootLayout({
   children,

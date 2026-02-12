@@ -16,6 +16,8 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
 )
 const cpmt_id = process.env.NEXT_PUBLIC_CPMT_ID
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const Integration_id = process.env.NEXT_PUBLIC_INTEGRATION_ID
 
 export default function CheckoutPage() {
   const hydrated = useHydrated()
@@ -64,6 +66,7 @@ export default function CheckoutPage() {
     customerEmail: string,
     customerName: string,
     amount: number,
+    sessionToken: string,
   ) => {
     setPaymentCompleted(true)
     try {
@@ -83,11 +86,31 @@ export default function CheckoutPage() {
         }),
       })
 
-      const data = await response.json()
-      setStripeId(data.paymentRecord?.id)
-
       if (!response.ok) {
         throw new Error('Failed to record payment')
+      }
+
+      const data = await response.json()
+      const stripePaymentRecordId = data.paymentRecord?.id
+
+      setStripeId(stripePaymentRecordId)
+
+      const recordStripeId = await fetch(
+        `${API_BASE_URL}/integrations/public/stripe/session/payment-record`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            stripePaymentRecordId,
+          }),
+        },
+      )
+
+      if (!recordStripeId.ok) {
+        throw new Error('Failed to link Stripe payment record')
       }
     } catch (error) {
       console.error(error)
@@ -398,8 +421,8 @@ export default function CheckoutPage() {
                   }
                 }}
                 amount={total}
-                integrationId="ee34c83e-fbb7-4c81-8e1a-d55a65f15173"
-                paymentIntentId="payment-intent-id"
+                integrationId={Integration_id ?? ''}
+                // paymentIntentId="payment-intent-id"
                 customerName={'John Smith'}
                 customerEmail={'john.smith@example.com'}
                 customerAddress={'123 Main St New York, NY 10001 United States'}

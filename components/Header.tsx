@@ -127,7 +127,7 @@ export default function Header() {
                   {totalItems > 0 && (
                     <button
                       onClick={handleClearCart}
-                      className="w-full flex items-center gap-3 px-2.5 py-1 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full flex items-center gap-3 rounded-lg px-2.5 py-1 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                       Clear

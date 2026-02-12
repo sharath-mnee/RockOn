@@ -20,7 +20,8 @@ export default function SuccessPageClient() {
 
   const shipping = 2.49
   const tax = subtotal * 0.1
-  const total = subtotal + shipping + tax
+  // const total = subtotal + shipping + tax
+  const total = subtotal
 
   return (
     <main className="container mx-auto px-4 py-8">

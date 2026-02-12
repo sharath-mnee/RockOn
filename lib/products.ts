@@ -123,7 +123,6 @@ export const products: Product[] = [
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     rating: 4.9,
     reviews: 1023,
-    badge: 'Best seller',
   },
 ]
 

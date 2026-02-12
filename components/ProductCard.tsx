@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="product-card border border-gray-300 rounded-xl">
-      <div className="relative h-[420px] overflow-hidden">
+      <div className="relative h-[420px] overflow-hidden rounded-t-xl">
         <Image
           src={product.image}
           alt={product.name}
@@ -37,7 +37,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             className={`absolute top-3 right-3 px-3 py-1 rounded-lg text-xs font-semibold ${
               product.badge === 'Best seller'
                 ? 'bg-brand-orange text-white'
-                : 'bg-green-600 text-white'
+                : product.badge === 'New'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-black'
             }`}
           >
             {product.badge}
